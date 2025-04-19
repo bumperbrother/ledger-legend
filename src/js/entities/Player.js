@@ -3,7 +3,7 @@ import * as THREE from 'three';
 class Player {
   constructor(scene, characterType) {
     this.scene = scene;
-    this.characterType = characterType; // 'male' or 'female'
+    this.characterType = characterType; // 'debitDave' or 'creditCathy'
     this.position = new THREE.Vector3(0, 0, 0);
     this.speed = 150; // pixels per second
     this.mesh = null;
@@ -18,66 +18,154 @@ class Player {
   }
   
   createMesh() {
-    // Create a simple placeholder mesh for the player
-    // In a full implementation, this would load the character sprite textures
+    // Create a group to hold all character parts
+    this.mesh = new THREE.Group();
+    this.mesh.position.set(this.position.x, this.position.y, 1);
     
-    // Create a plane geometry for the sprite
-    const geometry = new THREE.PlaneGeometry(32, 48); // Character size
-    
-    // Create a material with a color based on character type
-    const material = new THREE.MeshBasicMaterial({
-      color: this.characterType === 'male' ? 0x3498db : 0xe74c3c,
-      transparent: true,
-      side: THREE.DoubleSide
-    });
-    
-    // Create the mesh
-    this.mesh = new THREE.Mesh(geometry, material);
-    this.mesh.position.set(this.position.x, this.position.y, 1); // Z=1 to be above the ground
+    // Add character parts based on character type
+    if (this.characterType === 'debitDave') {
+      this.createDebitDave();
+    } else {
+      this.createCreditCathy();
+    }
     
     // Add to scene
     this.scene.add(this.mesh);
+  }
+  
+  createDebitDave() {
+    // Create head (skin tone)
+    const headGeometry = new THREE.PlaneGeometry(20, 20);
+    const headMaterial = new THREE.MeshBasicMaterial({
+      color: 0xFFD3B6, // Skin tone
+      transparent: true,
+      side: THREE.DoubleSide
+    });
+    const head = new THREE.Mesh(headGeometry, headMaterial);
+    head.position.set(0, 15, 1.1);
     
-    // In a full implementation, we would load sprite textures here
-    // this.loadTextures();
+    // Create hair (brown)
+    const hairGeometry = new THREE.PlaneGeometry(22, 8);
+    const hairMaterial = new THREE.MeshBasicMaterial({
+      color: 0x8B4513, // Brown hair
+      transparent: true,
+      side: THREE.DoubleSide
+    });
+    const hair = new THREE.Mesh(hairGeometry, hairMaterial);
+    hair.position.set(0, 24, 1.2);
+    
+    // Create body (blue suit)
+    const bodyGeometry = new THREE.PlaneGeometry(30, 35);
+    const bodyMaterial = new THREE.MeshBasicMaterial({
+      color: 0x3498db, // Blue suit (primary color)
+      transparent: true,
+      side: THREE.DoubleSide
+    });
+    const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+    body.position.set(0, -10, 1);
+    
+    // Create tie (red)
+    const tieGeometry = new THREE.PlaneGeometry(5, 15);
+    const tieMaterial = new THREE.MeshBasicMaterial({
+      color: 0xe74c3c, // Red tie (accent color)
+      transparent: true,
+      side: THREE.DoubleSide
+    });
+    const tie = new THREE.Mesh(tieGeometry, tieMaterial);
+    tie.position.set(0, 0, 1.3);
+    
+    // Add all parts to the mesh group
+    this.mesh.add(head);
+    this.mesh.add(hair);
+    this.mesh.add(body);
+    this.mesh.add(tie);
+  }
+  
+  createCreditCathy() {
+    // Create head (skin tone)
+    const headGeometry = new THREE.PlaneGeometry(20, 20);
+    const headMaterial = new THREE.MeshBasicMaterial({
+      color: 0xFFD3B6, // Skin tone
+      transparent: true,
+      side: THREE.DoubleSide
+    });
+    const head = new THREE.Mesh(headGeometry, headMaterial);
+    head.position.set(0, 15, 1.1);
+    
+    // Create hair (blonde)
+    const hairGeometry = new THREE.PlaneGeometry(25, 25);
+    const hairMaterial = new THREE.MeshBasicMaterial({
+      color: 0xFFD700, // Blonde hair
+      transparent: true,
+      side: THREE.DoubleSide
+    });
+    const hair = new THREE.Mesh(hairGeometry, hairMaterial);
+    hair.position.set(0, 25, 1.2);
+    
+    // Create body (green dress/suit)
+    const bodyGeometry = new THREE.PlaneGeometry(30, 35);
+    const bodyMaterial = new THREE.MeshBasicMaterial({
+      color: 0x2ecc71, // Green dress (secondary color)
+      transparent: true,
+      side: THREE.DoubleSide
+    });
+    const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+    body.position.set(0, -10, 1);
+    
+    // Create necklace (gold)
+    const necklaceGeometry = new THREE.PlaneGeometry(10, 5);
+    const necklaceMaterial = new THREE.MeshBasicMaterial({
+      color: 0xf1c40f, // Gold necklace (yellow)
+      transparent: true,
+      side: THREE.DoubleSide
+    });
+    const necklace = new THREE.Mesh(necklaceGeometry, necklaceMaterial);
+    necklace.position.set(0, 5, 1.3);
+    
+    // Add all parts to the mesh group
+    this.mesh.add(head);
+    this.mesh.add(hair);
+    this.mesh.add(body);
+    this.mesh.add(necklace);
   }
   
   loadTextures() {
     // This would load the character sprite textures for different directions and animations
-    // For now, we'll use colored rectangles as placeholders
+    // For now, we'll use colored rectangles with character details as placeholders
     
     // Example of how texture loading would work:
     /*
     const textureLoader = new THREE.TextureLoader();
+    const characterFolder = this.characterType === 'debitDave' ? 'debit_dave' : 'credit_cathy';
     
     // Load textures for different directions
     this.textures = {
       up: {
-        idle: textureLoader.load('/assets/textures/player/${this.characterType}_up_idle.png'),
+        idle: textureLoader.load(`/assets/textures/player/${characterFolder}_up_idle.png`),
         walk: [
-          textureLoader.load('/assets/textures/player/${this.characterType}_up_walk_1.png'),
-          textureLoader.load('/assets/textures/player/${this.characterType}_up_walk_2.png')
+          textureLoader.load(`/assets/textures/player/${characterFolder}_up_walk_1.png`),
+          textureLoader.load(`/assets/textures/player/${characterFolder}_up_walk_2.png`)
         ]
       },
       down: {
-        idle: textureLoader.load('/assets/textures/player/${this.characterType}_down_idle.png'),
+        idle: textureLoader.load(`/assets/textures/player/${characterFolder}_down_idle.png`),
         walk: [
-          textureLoader.load('/assets/textures/player/${this.characterType}_down_walk_1.png'),
-          textureLoader.load('/assets/textures/player/${this.characterType}_down_walk_2.png')
+          textureLoader.load(`/assets/textures/player/${characterFolder}_down_walk_1.png`),
+          textureLoader.load(`/assets/textures/player/${characterFolder}_down_walk_2.png`)
         ]
       },
       left: {
-        idle: textureLoader.load('/assets/textures/player/${this.characterType}_left_idle.png'),
+        idle: textureLoader.load(`/assets/textures/player/${characterFolder}_left_idle.png`),
         walk: [
-          textureLoader.load('/assets/textures/player/${this.characterType}_left_walk_1.png'),
-          textureLoader.load('/assets/textures/player/${this.characterType}_left_walk_2.png')
+          textureLoader.load(`/assets/textures/player/${characterFolder}_left_walk_1.png`),
+          textureLoader.load(`/assets/textures/player/${characterFolder}_left_walk_2.png`)
         ]
       },
       right: {
-        idle: textureLoader.load('/assets/textures/player/${this.characterType}_right_idle.png'),
+        idle: textureLoader.load(`/assets/textures/player/${characterFolder}_right_idle.png`),
         walk: [
-          textureLoader.load('/assets/textures/player/${this.characterType}_right_walk_1.png'),
-          textureLoader.load('/assets/textures/player/${this.characterType}_right_walk_2.png')
+          textureLoader.load(`/assets/textures/player/${characterFolder}_right_walk_1.png`),
+          textureLoader.load(`/assets/textures/player/${characterFolder}_right_walk_2.png`)
         ]
       }
     };
@@ -156,7 +244,7 @@ class Player {
   }
   
   updateSprite() {
-    // Update the sprite texture based on direction and animation frame
+    // Update the sprite based on direction and animation frame
     // In a full implementation, this would change the texture of the mesh
     
     // For now, we'll just rotate the mesh based on direction
@@ -173,6 +261,12 @@ class Player {
       case 'right':
         this.mesh.rotation.z = -Math.PI / 2;
         break;
+    }
+    
+    // Add a slight bounce effect when moving
+    if (this.isMoving) {
+      const bounceHeight = Math.sin(this.animationTime * Math.PI * 5) * 2;
+      this.mesh.position.y = this.position.y + bounceHeight;
     }
     
     // In a full implementation, we would update the texture:

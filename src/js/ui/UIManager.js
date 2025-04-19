@@ -55,18 +55,18 @@ class UIManager {
   initCharacterSelection() {
     let selectedCharacter = null;
     
-    // Handle male character selection
+    // Handle Debit Dave (male) character selection
     this.maleCharacter.addEventListener('click', () => {
       this.maleCharacter.classList.add('selected');
       this.femaleCharacter.classList.remove('selected');
-      selectedCharacter = 'male';
+      selectedCharacter = 'debitDave';
     });
     
-    // Handle female character selection
+    // Handle Credit Cathy (female) character selection
     this.femaleCharacter.addEventListener('click', () => {
       this.femaleCharacter.classList.add('selected');
       this.maleCharacter.classList.remove('selected');
-      selectedCharacter = 'female';
+      selectedCharacter = 'creditCathy';
     });
     
     // Handle game start
