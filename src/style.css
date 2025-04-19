@@ -192,6 +192,52 @@ body {
   height: 120px;
 }
 
+#intro-screen {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 600px;
+  background-color: var(--color-dialog-bg);
+  border: 5px solid var(--color-black);
+  padding: 30px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+#intro-screen h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+.intro-content {
+  margin-bottom: 30px;
+  text-align: left;
+}
+
+.intro-content p {
+  margin-bottom: 15px;
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+#continue-button {
+  padding: 12px 24px;
+  background-color: var(--color-primary);
+  color: white;
+  border: 3px solid var(--color-black);
+  border-radius: 5px;
+  font-family: 'Courier New', monospace;
+  font-size: 18px;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+#continue-button:hover {
+  transform: scale(1.05);
+}
+
 #character-selection {
   position: absolute;
   top: 50%;

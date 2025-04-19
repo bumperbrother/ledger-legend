@@ -15,6 +15,8 @@ class UIManager {
     this.dialogContent = document.getElementById('dialog-content');
     this.dialogAccept = document.getElementById('dialog-accept');
     this.dialogSignup = document.getElementById('dialog-signup');
+    this.introScreen = document.getElementById('intro-screen');
+    this.continueButton = document.getElementById('continue-button');
     this.characterSelection = document.getElementById('character-selection');
     this.maleCharacter = document.getElementById('male-character');
     this.femaleCharacter = document.getElementById('female-character');
@@ -26,6 +28,9 @@ class UIManager {
   }
   
   init() {
+    // Initialize intro screen
+    this.initIntroScreen();
+    
     // Initialize character selection
     this.initCharacterSelection();
     
@@ -38,6 +43,13 @@ class UIManager {
     // Hide points and inventory displays initially
     this.hidePointsDisplay();
     this.hideInventoryDisplay();
+  }
+  
+  initIntroScreen() {
+    // Handle continue button click
+    this.continueButton.addEventListener('click', () => {
+      this.game.continueToCharacterSelection();
+    });
   }
   
   initCharacterSelection() {
@@ -90,6 +102,14 @@ class UIManager {
       this.hideDialog();
       this.game.closeDialog();
     });
+  }
+  
+  showIntroScreen() {
+    this.introScreen.classList.remove('hidden');
+  }
+  
+  hideIntroScreen() {
+    this.introScreen.classList.add('hidden');
   }
   
   showCharacterSelection() {

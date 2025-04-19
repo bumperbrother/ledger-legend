@@ -8,6 +8,7 @@ import { saveGame, loadGame } from './GameData.js';
 
 // Game states
 const GAME_STATES = {
+  INTRO: 'intro',
   CHARACTER_SELECTION: 'characterSelection',
   PLAYING: 'playing',
   DIALOG: 'dialog'
@@ -20,7 +21,7 @@ class Game {
     this.camera = null;
     this.renderer = null;
     this.clock = new THREE.Clock();
-    this.gameState = GAME_STATES.CHARACTER_SELECTION;
+    this.gameState = GAME_STATES.INTRO;
     this.player = null;
     this.map = null;
     this.buildings = [];
@@ -193,11 +194,22 @@ class Game {
   }
   
   initUI() {
-    // Show character selection screen
-    this.ui.showCharacterSelection();
+    // Show intro screen
+    this.ui.showIntroScreen();
     
     // Initialize empty inventory display
     this.ui.updateResourceDisplay(this.resources);
+  }
+  
+  continueToCharacterSelection() {
+    // Hide intro screen
+    this.ui.hideIntroScreen();
+    
+    // Show character selection screen
+    this.ui.showCharacterSelection();
+    
+    // Update game state
+    this.gameState = GAME_STATES.CHARACTER_SELECTION;
   }
   
   initControls() {
