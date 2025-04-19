@@ -22,11 +22,78 @@ class UIManager {
     this.buildingChecklist = document.getElementById('building-checklist');
     this.checklistItems = document.getElementById('checklist-items');
     
+    // Create victory popup
+    this.createVictoryPopup();
+    
     // Create reset button
     this.createResetButton();
     
     // Initialize UI
     this.init();
+  }
+  
+  // Create a victory popup and add it to the UI
+  createVictoryPopup() {
+    // Create the victory popup container
+    this.victoryPopup = document.createElement('div');
+    this.victoryPopup.id = 'victory-popup';
+    this.victoryPopup.className = 'hidden';
+    
+    // Create the victory content
+    const victoryContent = document.createElement('div');
+    victoryContent.id = 'victory-content';
+    
+    // Create the heading
+    const heading = document.createElement('h2');
+    heading.textContent = 'You\'ve Won!';
+    
+    // Create the message
+    const message = document.createElement('p');
+    message.textContent = 'Congratulations! You\'ve visited all buildings in Accounting Town!';
+    
+    // Create the share buttons container
+    const shareButtons = document.createElement('div');
+    shareButtons.id = 'share-buttons';
+    
+    // Create the X (Twitter) share button
+    const xButton = document.createElement('button');
+    xButton.id = 'share-x';
+    xButton.textContent = 'Share on X';
+    xButton.addEventListener('click', () => {
+      const text = 'I just completed Ledger Legend! Check out this awesome accounting game!';
+      const url = window.location.href;
+      window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+    });
+    
+    // Create the LinkedIn share button
+    const linkedinButton = document.createElement('button');
+    linkedinButton.id = 'share-linkedin';
+    linkedinButton.textContent = 'Post to LinkedIn';
+    linkedinButton.addEventListener('click', () => {
+      const text = 'I just completed Ledger Legend! Check out this awesome accounting game!';
+      const url = window.location.href;
+      window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
+    });
+    
+    // Create the close button
+    const closeButton = document.createElement('button');
+    closeButton.id = 'victory-close';
+    closeButton.textContent = 'Close';
+    closeButton.addEventListener('click', () => {
+      this.hideVictoryPopup();
+    });
+    
+    // Assemble the popup
+    shareButtons.appendChild(xButton);
+    shareButtons.appendChild(linkedinButton);
+    victoryContent.appendChild(heading);
+    victoryContent.appendChild(message);
+    victoryContent.appendChild(shareButtons);
+    victoryContent.appendChild(closeButton);
+    this.victoryPopup.appendChild(victoryContent);
+    
+    // Add to UI container
+    document.getElementById('ui-container').appendChild(this.victoryPopup);
   }
   
   // Create a reset button and add it to the UI
@@ -282,6 +349,15 @@ class UIManager {
     this.buildingChecklist.classList.add('hidden');
   }
   
+  // Show the victory popup
+  showVictoryPopup() {
+    this.victoryPopup.classList.remove('hidden');
+  }
+  
+  // Hide the victory popup
+  hideVictoryPopup() {
+    this.victoryPopup.classList.add('hidden');
+  }
 }
 
 export default UIManager;

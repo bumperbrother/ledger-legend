@@ -448,7 +448,8 @@ class Game {
     // Check if all buildings have been visited
     const allVisited = this.buildings.every(building => this.visitedBuildings[building.id]);
     if (allVisited) {
-      this.ui.showNotification('Congratulations! You have visited all buildings!');
+      // Show victory popup instead of just a notification
+      this.ui.showVictoryPopup();
     } else {
       // Count how many buildings have been visited
       const visitedCount = Object.keys(this.visitedBuildings).length;
