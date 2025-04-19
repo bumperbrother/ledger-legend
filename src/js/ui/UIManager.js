@@ -164,27 +164,7 @@ class UIManager {
       this.dialogSignup.classList.add('hidden');
     }
     
-    // Remove any existing close button to prevent duplicates
-    if (this.closeButton) {
-      this.closeButton.remove();
-    }
-    
-    // Create a new close button
-    this.closeButton = document.createElement('button');
-    this.closeButton.id = 'dialog-close-button';
-    this.closeButton.textContent = '✕';
-    
-    // Add event listener to close button
-    this.closeButton.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      console.log('Close button clicked');
-      this.hideDialog();
-      this.game.closeDialog();
-    });
-    
-    // Add close button to dialog box
-    this.dialogBox.appendChild(this.closeButton);
+    // Close button removed as dialogs now automatically close when player moves away
     
     // Show dialog box
     this.dialogBox.classList.remove('hidden');
@@ -206,11 +186,7 @@ class UIManager {
   hideDialog() {
     this.dialogBox.classList.add('hidden');
     
-    // Remove close button
-    if (this.closeButton) {
-      this.closeButton.remove();
-      this.closeButton = null;
-    }
+    // Close button has been removed
     
     // Remove escape key event listener
     if (this.escapeKeyHandler) {

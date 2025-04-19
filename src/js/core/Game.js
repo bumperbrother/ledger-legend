@@ -233,7 +233,8 @@ class Game {
         return;
       }
       
-      if (this.gameState !== GAME_STATES.PLAYING) return;
+      // Allow movement controls in both PLAYING and DIALOG states
+      if (this.gameState !== GAME_STATES.PLAYING && this.gameState !== GAME_STATES.DIALOG) return;
       
       switch (e.key) {
         case 'ArrowUp':
@@ -256,7 +257,8 @@ class Game {
     });
     
     window.addEventListener('keyup', (e) => {
-      if (this.gameState !== GAME_STATES.PLAYING) return;
+      // Allow movement controls in both PLAYING and DIALOG states
+      if (this.gameState !== GAME_STATES.PLAYING && this.gameState !== GAME_STATES.DIALOG) return;
       
       switch (e.key) {
         case 'ArrowUp':
@@ -292,7 +294,8 @@ class Game {
       });
       
       this.joystick.on('move', (evt, data) => {
-        if (this.gameState !== GAME_STATES.PLAYING) return;
+        // Allow movement controls in both PLAYING and DIALOG states
+        if (this.gameState !== GAME_STATES.PLAYING && this.gameState !== GAME_STATES.DIALOG) return;
         
         const angle = data.angle.radian;
         const force = Math.min(data.force, 1);
@@ -494,8 +497,8 @@ class Game {
     // Update mobile status
     this.isMobile = window.innerWidth < 768;
     
-    // Show/hide mobile controls
-    if (this.isMobile && this.gameState === GAME_STATES.PLAYING) {
+    // Show/hide mobile controls - allow controls in both PLAYING and DIALOG states
+    if (this.isMobile && (this.gameState === GAME_STATES.PLAYING || this.gameState === GAME_STATES.DIALOG)) {
       this.ui.showMobileControls();
     } else {
       this.ui.hideMobileControls();
@@ -505,8 +508,9 @@ class Game {
   update() {
     const deltaTime = this.clock.getDelta();
     
-    // Update player if game is in playing state
-    if (this.gameState === GAME_STATES.PLAYING && this.player) {
+    // Update player if game is in playing or dialog state
+    // This allows player to continue moving even when dialog is shown
+    if ((this.gameState === GAME_STATES.PLAYING || this.gameState === GAME_STATES.DIALOG) && this.player) {
       this.player.update(deltaTime, this.controls);
       
       // Update camera to follow player
@@ -515,11 +519,9 @@ class Game {
         this.camera.position.y = this.player.position.y;
       }
       
-      // Check for collisions with buildings
+      // Check for building interactions (no collision check)
       if (this.buildings && this.buildings.length > 0) {
-        this.player.checkBuildingCollisions(this.buildings);
-        
-        // Check for building interactions
+        // Removed building collision check to allow player to walk through buildings
         this.checkBuildingInteractions();
       }
     }
@@ -563,14 +565,17 @@ class Game {
       }
     }
     
-    // If player is not overlapping any building but a dialog is shown, close it
-    if (!isOverlappingAnyBuilding && this.gameState === GAME_STATES.DIALOG) {
-      this.closeDialog();
-      this.currentBuildingId = null;
+    // If player is not overlapping with the current building that triggered the dialog, close it
+    if (this.gameState === GAME_STATES.DIALOG && this.currentBuildingId) {
+      const currentBuilding = this.buildings.find(b => b.id === this.currentBuildingId);
+      if (currentBuilding && !this.player.isOverlappingBuilding(currentBuilding)) {
+        this.closeDialog();
+        this.currentBuildingId = null;
+      }
     }
   }
   
-  // Force close dialog and reset game state
+  // Close dialog and reset game state
   closeDialog() {
     console.log('Game.closeDialog called');
     
@@ -583,26 +588,6 @@ class Game {
     // Clear current dialog
     this.currentDialog = null;
     this.currentBuildingId = null;
-    
-    // Reset controls to prevent stuck movement
-    this.controls.up = false;
-    this.controls.down = false;
-    this.controls.left = false;
-    this.controls.right = false;
-    
-    // Move player slightly away from the building to prevent immediate re-triggering
-    if (this.player) {
-      // Calculate direction away from the center of the map
-      const dirX = this.player.position.x === 0 ? 1 : Math.sign(this.player.position.x);
-      const dirY = this.player.position.y === 0 ? 1 : Math.sign(this.player.position.y);
-      
-      // Move player slightly in that direction
-      this.player.position.x += dirX * 5;
-      this.player.position.y += dirY * 5;
-      
-      // Update mesh position
-      this.player.mesh.position.set(this.player.position.x, this.player.position.y, 1);
-    }
     
     console.log('Dialog closed, game state reset to PLAYING');
   }
