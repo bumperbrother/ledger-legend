@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="An 8-bit style accounting game where you build your own accounting empire" />
+    <meta name="keywords" content="accounting game, three.js game, ledger legend, 8-bit game" />
+    <title>Ledger Legend: Building Your Accounting Empire</title>
+  </head>
+  <body>
+    <div id="game-container">
+      <canvas id="game-canvas"></canvas>
+      <audio id="background-music" loop preload="auto" crossorigin="anonymous">
+        <source src="./assets/audio/background-music.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+      </audio>
+      <div id="audio-controls" style="position: absolute; bottom: 20px; right: 20px; z-index: 1000; display: flex; align-items: center; background-color: rgba(255, 255, 255, 0.7); padding: 5px; border-radius: 5px;">
+        <button id="mute-audio" style="padding: 5px 10px; margin-right: 10px;">
+          🔊
+        </button>
+        <input type="range" id="volume-control" min="0" max="100" value="25" style="width: 100px;">
+      </div>
+      <div id="ui-container">
+        <div id="points-display">Points: 0</div>
+        <div id="inventory-display">
+          <h3>Resources</h3>
+          <div id="inventory-items"></div>
+        </div>
+        <div id="dialog-box" class="hidden">
+          <div id="dialog-content"></div>
+          <div id="dialog-buttons">
+            <button id="dialog-accept">Accept</button>
+            <button id="dialog-signup" class="hidden">Sign Up</button>
+          </div>
+        </div>
+        <div id="mobile-controls" class="hidden">
+          <!-- Virtual joystick will be placed here -->
+        </div>
+        <div id="character-selection" class="hidden">
+          <h2>Choose Your Accountant</h2>
+          <div id="character-options">
+            <div id="male-character" class="character-option">
+              <div class="character-preview male"></div>
+              <p>Male Accountant</p>
+            </div>
+            <div id="female-character" class="character-option">
+              <div class="character-preview female"></div>
+              <p>Female Accountant</p>
+            </div>
+          </div>
+          <button id="start-game">Start Your Accounting Journey</button>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
