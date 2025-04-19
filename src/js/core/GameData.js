@@ -172,3 +172,15 @@ export const loadGame = () => {
     return null;
   }
 };
+
+// Clear all game data from localStorage
+export const clearGameData = () => {
+  try {
+    localStorage.removeItem('ledgerLegendSave');
+    console.log('Game data cleared successfully');
+    return true;
+  } catch (error) {
+    console.error('Failed to clear game data:', error);
+    return false;
+  }
+};

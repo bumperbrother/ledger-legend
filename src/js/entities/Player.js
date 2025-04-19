@@ -287,26 +287,54 @@ class Player {
   
   checkBuildingCollisions(buildings) {
     // Check for collisions with buildings
-    // In a full implementation, this would prevent the player from walking through buildings
+    // This prevents the player from walking through buildings
     
-    // Example implementation:
-    /*
+    // Create a bounding box for the player
+    const playerBox = new THREE.Box2(
+      new THREE.Vector2(this.position.x - 15, this.position.y - 20),
+      new THREE.Vector2(this.position.x + 15, this.position.y + 20)
+    );
+    
     for (const building of buildings) {
-      const playerBox = new THREE.Box2(
-        new THREE.Vector2(this.position.x - 16, this.position.y - 24),
-        new THREE.Vector2(this.position.x + 16, this.position.y + 24)
-      );
-      
       const buildingBox = new THREE.Box2(
         new THREE.Vector2(building.position.x - building.width / 2, building.position.y - building.height / 2),
         new THREE.Vector2(building.position.x + building.width / 2, building.position.y + building.height / 2)
       );
       
       if (playerBox.intersectsBox(buildingBox)) {
-        // Handle collision (push player back, etc.)
+        // Handle collision by pushing player back
+        // Calculate direction from building center to player
+        const direction = new THREE.Vector2(
+          this.position.x - building.position.x,
+          this.position.y - building.position.y
+        ).normalize();
+        
+        // Move player away from building
+        this.position.x = building.position.x + (building.width / 2 + 20) * Math.sign(direction.x);
+        this.position.y = building.position.y + (building.height / 2 + 20) * Math.sign(direction.y);
+        
+        // Update mesh position
+        this.mesh.position.set(this.position.x, this.position.y, 1);
       }
     }
-    */
+  }
+  
+  // Check if player is overlapping with a building (for interaction)
+  isOverlappingBuilding(building) {
+    // Create a larger interaction box for the player
+    const playerInteractionBox = new THREE.Box2(
+      new THREE.Vector2(this.position.x - 25, this.position.y - 30),
+      new THREE.Vector2(this.position.x + 25, this.position.y + 30)
+    );
+    
+    // Create a box for the building
+    const buildingBox = new THREE.Box2(
+      new THREE.Vector2(building.position.x - building.width / 2, building.position.y - building.height / 2),
+      new THREE.Vector2(building.position.x + building.width / 2, building.position.y + building.height / 2)
+    );
+    
+    // Return true if the boxes intersect
+    return playerInteractionBox.intersectsBox(buildingBox);
   }
 }
 

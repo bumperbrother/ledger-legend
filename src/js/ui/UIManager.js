@@ -23,8 +23,27 @@ class UIManager {
     this.startGameButton = document.getElementById('start-game');
     this.mobileControls = document.getElementById('mobile-controls');
     
+    // Create reset button
+    this.createResetButton();
+    
     // Initialize UI
     this.init();
+  }
+  
+  // Create a reset button and add it to the UI
+  createResetButton() {
+    this.resetButton = document.createElement('button');
+    this.resetButton.id = 'reset-game-button';
+    this.resetButton.textContent = 'Reset Game (Shift+R)';
+    this.resetButton.style.display = 'none'; // Hidden by default
+    
+    // Add event listener
+    this.resetButton.addEventListener('click', () => {
+      this.game.resetGame();
+    });
+    
+    // Add to UI container
+    document.getElementById('ui-container').appendChild(this.resetButton);
   }
   
   init() {
@@ -121,8 +140,13 @@ class UIManager {
   }
   
   showDialog(dialog) {
+    console.log('Showing dialog:', dialog);
+    
     // Update dialog content
     this.dialogContent.textContent = dialog.text;
+    
+    // Always hide the Accept button
+    this.dialogAccept.classList.add('hidden');
     
     // Show/hide signup button and update button text based on building type
     if (dialog.signupLink) {
@@ -140,12 +164,59 @@ class UIManager {
       this.dialogSignup.classList.add('hidden');
     }
     
+    // Remove any existing close button to prevent duplicates
+    if (this.closeButton) {
+      this.closeButton.remove();
+    }
+    
+    // Create a new close button
+    this.closeButton = document.createElement('button');
+    this.closeButton.id = 'dialog-close-button';
+    this.closeButton.textContent = '✕';
+    
+    // Add event listener to close button
+    this.closeButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log('Close button clicked');
+      this.hideDialog();
+      this.game.closeDialog();
+    });
+    
+    // Add close button to dialog box
+    this.dialogBox.appendChild(this.closeButton);
+    
     // Show dialog box
     this.dialogBox.classList.remove('hidden');
+    
+    // Add event listener for Escape key
+    this.escapeKeyHandler = (e) => {
+      if (e.key === 'Escape') {
+        console.log('Escape key pressed in UI handler');
+        this.hideDialog();
+        this.game.closeDialog();
+      }
+    };
+    
+    document.addEventListener('keydown', this.escapeKeyHandler);
+    
+    // Removed notification about how to close the dialog as requested by user
   }
   
   hideDialog() {
     this.dialogBox.classList.add('hidden');
+    
+    // Remove close button
+    if (this.closeButton) {
+      this.closeButton.remove();
+      this.closeButton = null;
+    }
+    
+    // Remove escape key event listener
+    if (this.escapeKeyHandler) {
+      document.removeEventListener('keydown', this.escapeKeyHandler);
+      this.escapeKeyHandler = null;
+    }
   }
   
   updatePointsDisplay(points) {
@@ -154,6 +225,11 @@ class UIManager {
   
   showPointsDisplay() {
     this.pointsDisplay.classList.remove('hidden');
+    
+    // Also show reset button when game starts
+    if (this.resetButton) {
+      this.resetButton.style.display = 'block';
+    }
   }
   
   hidePointsDisplay() {

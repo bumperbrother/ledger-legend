@@ -4,7 +4,7 @@ import nipplejs from 'nipplejs';
 import Player from '../entities/Player.js';
 import Map from './Map.js';
 import UIManager from '../ui/UIManager.js';
-import { saveGame, loadGame } from './GameData.js';
+import { saveGame, loadGame, clearGameData } from './GameData.js';
 
 // Game states
 const GAME_STATES = {
@@ -172,12 +172,15 @@ class Game {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x87CEEB); // Sky blue background
     
-    // Create camera
+    // Create camera with zoom factor to make the map seem bigger
+    // A smaller view area means the camera is "zoomed in"
+    this.zoomFactor = 4; // Adjusted zoom factor based on user feedback
+    
     this.camera = new THREE.OrthographicCamera(
-      window.innerWidth / -2,
-      window.innerWidth / 2,
-      window.innerHeight / 2,
-      window.innerHeight / -2,
+      window.innerWidth / -2 / this.zoomFactor,
+      window.innerWidth / 2 / this.zoomFactor,
+      window.innerHeight / 2 / this.zoomFactor,
+      window.innerHeight / -2 / this.zoomFactor,
       1,
       1000
     );
@@ -215,6 +218,21 @@ class Game {
   initControls() {
     // Keyboard controls for desktop
     window.addEventListener('keydown', (e) => {
+      console.log('Key pressed:', e.key, 'Game state:', this.gameState);
+      
+      // Handle Escape key to close dialog regardless of game state
+      if (e.key === 'Escape' && this.gameState === GAME_STATES.DIALOG) {
+        console.log('Escape key pressed, closing dialog');
+        this.closeDialog();
+        return;
+      }
+      
+      // Handle R key to reset game (with Shift key as a safety)
+      if (e.key === 'R' && e.shiftKey) {
+        this.resetGame();
+        return;
+      }
+      
       if (this.gameState !== GAME_STATES.PLAYING) return;
       
       switch (e.key) {
@@ -305,31 +323,6 @@ class Game {
         this.controls.right = false;
       });
     }
-    
-    // Click/tap on buildings
-    this.canvas.addEventListener('click', (e) => {
-      if (this.gameState !== GAME_STATES.PLAYING) return;
-      
-      // Convert mouse position to normalized device coordinates
-      const mouse = new THREE.Vector2();
-      mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-      mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-      
-      // Raycasting to detect building clicks
-      const raycaster = new THREE.Raycaster();
-      raycaster.setFromCamera(mouse, this.camera);
-      
-      const intersects = raycaster.intersectObjects(this.buildings.map(building => building.mesh));
-      
-      if (intersects.length > 0) {
-        const buildingMesh = intersects[0].object;
-        const building = this.buildings.find(b => b.mesh === buildingMesh);
-        
-        if (building) {
-          this.interactWithBuilding(building);
-        }
-      }
-    });
   }
   
   startGame(characterType) {
@@ -488,11 +481,11 @@ class Game {
   }
   
   onWindowResize() {
-    // Update camera
-    this.camera.left = window.innerWidth / -2;
-    this.camera.right = window.innerWidth / 2;
-    this.camera.top = window.innerHeight / 2;
-    this.camera.bottom = window.innerHeight / -2;
+    // Update camera with zoom factor
+    this.camera.left = window.innerWidth / -2 / this.zoomFactor;
+    this.camera.right = window.innerWidth / 2 / this.zoomFactor;
+    this.camera.top = window.innerHeight / 2 / this.zoomFactor;
+    this.camera.bottom = window.innerHeight / -2 / this.zoomFactor;
     this.camera.updateProjectionMatrix();
     
     // Update renderer
@@ -525,6 +518,9 @@ class Game {
       // Check for collisions with buildings
       if (this.buildings && this.buildings.length > 0) {
         this.player.checkBuildingCollisions(this.buildings);
+        
+        // Check for building interactions
+        this.checkBuildingInteractions();
       }
     }
     
@@ -540,6 +536,91 @@ class Game {
       if (this.gameState === GAME_STATES.PLAYING) {
         this.saveGame();
       }
+    }
+  }
+  
+  // Check if player is overlapping with any buildings for interaction
+  checkBuildingInteractions() {
+    // Track if player is overlapping with any building
+    let isOverlappingAnyBuilding = false;
+    let overlappingBuilding = null;
+    
+    // Check each building
+    for (const building of this.buildings) {
+      if (this.player.isOverlappingBuilding(building)) {
+        isOverlappingAnyBuilding = true;
+        overlappingBuilding = building;
+        
+        // If we're not already showing a dialog for this building, show it
+        if (this.gameState !== GAME_STATES.DIALOG || this.currentBuildingId !== building.id) {
+          console.log('Showing dialog for building:', building.name);
+          this.interactWithBuilding(building);
+          this.currentBuildingId = building.id;
+        }
+        
+        // Only interact with one building at a time
+        break;
+      }
+    }
+    
+    // If player is not overlapping any building but a dialog is shown, close it
+    if (!isOverlappingAnyBuilding && this.gameState === GAME_STATES.DIALOG) {
+      this.closeDialog();
+      this.currentBuildingId = null;
+    }
+  }
+  
+  // Force close dialog and reset game state
+  closeDialog() {
+    console.log('Game.closeDialog called');
+    
+    // Set game state back to playing
+    this.gameState = GAME_STATES.PLAYING;
+    
+    // Hide dialog using UI manager
+    this.ui.hideDialog();
+    
+    // Clear current dialog
+    this.currentDialog = null;
+    this.currentBuildingId = null;
+    
+    // Reset controls to prevent stuck movement
+    this.controls.up = false;
+    this.controls.down = false;
+    this.controls.left = false;
+    this.controls.right = false;
+    
+    // Move player slightly away from the building to prevent immediate re-triggering
+    if (this.player) {
+      // Calculate direction away from the center of the map
+      const dirX = this.player.position.x === 0 ? 1 : Math.sign(this.player.position.x);
+      const dirY = this.player.position.y === 0 ? 1 : Math.sign(this.player.position.y);
+      
+      // Move player slightly in that direction
+      this.player.position.x += dirX * 5;
+      this.player.position.y += dirY * 5;
+      
+      // Update mesh position
+      this.player.mesh.position.set(this.player.position.x, this.player.position.y, 1);
+    }
+    
+    console.log('Dialog closed, game state reset to PLAYING');
+  }
+  
+  // Reset the game by clearing all saved data and reloading
+  resetGame() {
+    // Show confirmation dialog
+    if (confirm('Are you sure you want to reset the game? All progress will be lost.')) {
+      // Clear game data
+      clearGameData();
+      
+      // Show notification
+      this.ui.showNotification('Game data cleared. Restarting game...');
+      
+      // Reload the page after a short delay
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     }
   }
   

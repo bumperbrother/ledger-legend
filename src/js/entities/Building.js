@@ -25,71 +25,142 @@ class Building {
   }
   
   createMesh() {
-    // Create a simple placeholder mesh for the building
-    // In a full implementation, this would load building textures
+    // Create a group to hold all building parts
+    this.mesh = new THREE.Group();
+    this.mesh.position.set(this.position.x, this.position.y, 0);
     
-    // Create a plane geometry for the building
-    const geometry = new THREE.PlaneGeometry(this.width, this.height);
+    // Create the main building structure
+    this.createBuildingStructure();
     
-    // Create a material with the building color
-    const material = new THREE.MeshBasicMaterial({
+    // Add details to make it look more like a building
+    this.addBuildingDetails();
+    
+    // Add building name as signage on the building
+    this.addSignage();
+    
+    // Add to scene
+    this.scene.add(this.mesh);
+  }
+  
+  createBuildingStructure() {
+    // Create the main building body
+    const buildingGeometry = new THREE.PlaneGeometry(this.width, this.height);
+    const buildingMaterial = new THREE.MeshBasicMaterial({
       color: this.color,
       transparent: true,
       side: THREE.DoubleSide
     });
     
-    // Create the mesh
-    this.mesh = new THREE.Mesh(geometry, material);
-    this.mesh.position.set(this.position.x, this.position.y, 0); // Z=0 to be at ground level
+    const buildingBody = new THREE.Mesh(buildingGeometry, buildingMaterial);
+    buildingBody.position.set(0, 0, 0);
     
-    // Add to scene
-    this.scene.add(this.mesh);
+    // Add roof (triangle on top)
+    const roofHeight = this.height * 0.2;
+    const roofGeometry = new THREE.BufferGeometry();
+    const roofVertices = new Float32Array([
+      -this.width/2, this.height/2, 0.1,
+      this.width/2, this.height/2, 0.1,
+      0, this.height/2 + roofHeight, 0.1
+    ]);
+    roofGeometry.setAttribute('position', new THREE.BufferAttribute(roofVertices, 3));
     
-    // Add building name as a label
-    this.addLabel();
+    // Darker shade of the building color for the roof
+    const roofColor = new THREE.Color(this.color);
+    roofColor.multiplyScalar(0.8); // Darken
+    
+    const roofMaterial = new THREE.MeshBasicMaterial({
+      color: roofColor,
+      side: THREE.DoubleSide
+    });
+    
+    const roof = new THREE.Mesh(roofGeometry, roofMaterial);
+    
+    // Add to building group
+    this.mesh.add(buildingBody);
+    this.mesh.add(roof);
   }
   
-  addLabel() {
-    // Create a canvas for the label
+  addBuildingDetails() {
+    // Add door
+    const doorWidth = this.width * 0.2;
+    const doorHeight = this.height * 0.3;
+    const doorGeometry = new THREE.PlaneGeometry(doorWidth, doorHeight);
+    const doorMaterial = new THREE.MeshBasicMaterial({
+      color: 0x8B4513, // Brown door
+      transparent: true,
+      side: THREE.DoubleSide
+    });
+    
+    const door = new THREE.Mesh(doorGeometry, doorMaterial);
+    door.position.set(0, -this.height/2 + doorHeight/2, 0.1);
+    
+    // Add windows
+    const windowSize = this.width * 0.15;
+    const windowGeometry = new THREE.PlaneGeometry(windowSize, windowSize);
+    const windowMaterial = new THREE.MeshBasicMaterial({
+      color: 0xADD8E6, // Light blue windows
+      transparent: true,
+      side: THREE.DoubleSide
+    });
+    
+    // Left window
+    const leftWindow = new THREE.Mesh(windowGeometry, windowMaterial);
+    leftWindow.position.set(-this.width/4, 0, 0.1);
+    
+    // Right window
+    const rightWindow = new THREE.Mesh(windowGeometry, windowMaterial);
+    rightWindow.position.set(this.width/4, 0, 0.1);
+    
+    // Add to building group
+    this.mesh.add(door);
+    this.mesh.add(leftWindow);
+    this.mesh.add(rightWindow);
+  }
+  
+  addSignage() {
+    // Create a canvas for the signage
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
     canvas.width = 256;
     canvas.height = 64;
     
-    // Draw the label background
-    context.fillStyle = 'rgba(0, 0, 0, 0.7)';
+    // Draw the signage background
+    context.fillStyle = 'rgba(255, 255, 255, 0.9)';
     context.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Draw the label text
-    context.font = 'bold 24px Courier New';
+    // Add a border
+    context.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+    context.lineWidth = 4;
+    context.strokeRect(2, 2, canvas.width - 4, canvas.height - 4);
+    
+    // Draw the text
+    context.font = 'bold 24px Arial';
     context.textAlign = 'center';
     context.textBaseline = 'middle';
-    context.fillStyle = 'white';
+    context.fillStyle = 'black';
     context.fillText(this.name, canvas.width / 2, canvas.height / 2);
     
     // Create a texture from the canvas
     const texture = new THREE.CanvasTexture(canvas);
     
-    // Create a plane for the label
-    const labelGeometry = new THREE.PlaneGeometry(this.width, 20);
-    const labelMaterial = new THREE.MeshBasicMaterial({
+    // Create a plane for the signage
+    const signWidth = this.width * 0.8;
+    const signHeight = this.height * 0.15;
+    const signGeometry = new THREE.PlaneGeometry(signWidth, signHeight);
+    const signMaterial = new THREE.MeshBasicMaterial({
       map: texture,
       transparent: true,
       side: THREE.DoubleSide
     });
     
-    // Create the label mesh
-    this.labelMesh = new THREE.Mesh(labelGeometry, labelMaterial);
+    // Create the signage mesh
+    const signage = new THREE.Mesh(signGeometry, signMaterial);
     
-    // Position the label above the building
-    this.labelMesh.position.set(
-      this.position.x,
-      this.position.y + this.height / 2 + 15,
-      0.1 // Slightly above the building
-    );
+    // Position the signage on top of the building, below the roof
+    signage.position.set(0, this.height/2 - signHeight/2, 0.2);
     
-    // Add to scene
-    this.scene.add(this.labelMesh);
+    // Add to building group
+    this.mesh.add(signage);
   }
   
   // Check if a point is inside the building
