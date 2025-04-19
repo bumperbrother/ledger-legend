@@ -252,6 +252,62 @@ body {
   text-align: center;
 }
 
+/* Game Logo Styling */
+#game-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.logo-icon {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin-bottom: 10px;
+}
+
+.book {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 80px;
+  height: 80px;
+  background-color: var(--color-primary);
+  border: 3px solid var(--color-black);
+}
+
+.book:after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 60px;
+  height: 60px;
+  background-color: var(--color-white);
+  border: 2px solid var(--color-black);
+}
+
+.dollar-sign {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 36px;
+  font-weight: bold;
+  color: var(--color-secondary);
+  z-index: 1;
+}
+
+.logo-text {
+  font-family: 'Courier New', monospace;
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--color-black);
+  text-shadow: 2px 2px 0 var(--color-white);
+  letter-spacing: 1px;
+}
+
 #character-selection h2 {
   margin-bottom: 30px;
   font-size: 24px;
@@ -285,6 +341,117 @@ body {
   margin-bottom: 10px;
   border: 3px solid var(--color-black);
   background-color: #ddd;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Male character styling */
+.character-preview.male::before {
+  content: '';
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background-color: #FFD3B6; /* Skin tone */
+  border: 2px solid var(--color-black);
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 5px;
+}
+
+/* Male hair */
+.character-preview.male::after {
+  content: '';
+  position: absolute;
+  width: 44px;
+  height: 15px;
+  background-color: #8B4513; /* Brown hair */
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 5px 5px 0 0;
+  border: 2px solid var(--color-black);
+  border-bottom: none;
+}
+
+/* Male body */
+.character-preview.male .body {
+  position: absolute;
+  width: 60px;
+  height: 70px;
+  background-color: var(--color-primary); /* Blue suit */
+  border: 2px solid var(--color-black);
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 5px;
+}
+
+/* Male tie */
+.character-preview.male .tie {
+  position: absolute;
+  width: 10px;
+  height: 30px;
+  background-color: var(--color-accent); /* Red tie */
+  bottom: 35px;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 1px solid var(--color-black);
+}
+
+/* Female character styling */
+.character-preview.female::before {
+  content: '';
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background-color: #FFD3B6; /* Skin tone */
+  border: 2px solid var(--color-black);
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 5px;
+}
+
+/* Female hair */
+.character-preview.female::after {
+  content: '';
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background-color: #FFD700; /* Blonde hair */
+  top: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 25px 25px 0 0;
+  border: 2px solid var(--color-black);
+  border-bottom: none;
+}
+
+/* Female body */
+.character-preview.female .body {
+  position: absolute;
+  width: 60px;
+  height: 70px;
+  background-color: var(--color-secondary); /* Green dress/suit */
+  border: 2px solid var(--color-black);
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 5px;
+}
+
+/* Female necklace */
+.character-preview.female .necklace {
+  position: absolute;
+  width: 20px;
+  height: 10px;
+  background-color: var(--color-yellow); /* Gold necklace */
+  bottom: 65px;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 1px solid var(--color-black);
+  border-radius: 5px;
 }
 
 #start-game {
