@@ -34,6 +34,10 @@ class UIManager {
     
     // Initialize inventory UI (to be implemented)
     // this.initInventoryUI();
+    
+    // Hide points and inventory displays initially
+    this.hidePointsDisplay();
+    this.hideInventoryDisplay();
   }
   
   initCharacterSelection() {
@@ -128,6 +132,14 @@ class UIManager {
     this.pointsDisplay.textContent = `Points: ${formatNumber(points)}`;
   }
   
+  showPointsDisplay() {
+    this.pointsDisplay.classList.remove('hidden');
+  }
+  
+  hidePointsDisplay() {
+    this.pointsDisplay.classList.add('hidden');
+  }
+  
   showMobileControls() {
     if (window.innerWidth < 768) {
       this.mobileControls.classList.remove('hidden');
@@ -144,6 +156,14 @@ class UIManager {
   
   hideInventory() {
     // To be implemented
+  }
+  
+  showInventoryDisplay() {
+    this.inventoryDisplay.classList.remove('hidden');
+  }
+  
+  hideInventoryDisplay() {
+    this.inventoryDisplay.classList.add('hidden');
   }
   
   showNotification(message, duration = 3000) {

@@ -340,8 +340,13 @@ class Game {
     // Position player at the center of the map
     this.player.position.set(0, 0, 0);
     
-    // Update points display
+    // Update and show points display
     this.ui.updatePointsDisplay(this.points);
+    this.ui.showPointsDisplay();
+    
+    // Show inventory display
+    this.ui.updateResourceDisplay(this.resources);
+    this.ui.showInventoryDisplay();
     
     // Show mobile controls if on mobile
     if (this.isMobile) {
@@ -371,12 +376,14 @@ class Game {
       if (savedData.points !== undefined) {
         this.points = savedData.points;
         this.ui.updatePointsDisplay(this.points);
+        this.ui.showPointsDisplay();
       }
       
       // Restore resources
       if (savedData.resources) {
         this.resources = savedData.resources;
         this.ui.updateResourceDisplay(this.resources);
+        this.ui.showInventoryDisplay();
       }
       
       // Show notification
