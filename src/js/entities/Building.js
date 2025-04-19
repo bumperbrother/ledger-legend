@@ -15,9 +15,7 @@ class Building {
     // Building interaction properties
     this.npc = options.npc || null;
     this.dialog = options.dialog || null;
-    this.resource = options.resource || null;
     this.signupLink = options.signupLink || null;
-    this.signupPoints = options.signupPoints || 0;
     
     // Create the building mesh
     this.mesh = null;
@@ -182,16 +180,12 @@ class Building {
       return {
         text: `${this.npc.name}: ${this.npc.dialog}`,
         signupLink: this.signupLink,
-        signupPoints: this.signupPoints,
-        resource: this.resource,
         buildingName: this.name
       };
     } else {
       return {
         text: `You've entered ${this.name}.`,
         signupLink: this.signupLink,
-        signupPoints: this.signupPoints,
-        resource: this.resource,
         buildingName: this.name
       };
     }

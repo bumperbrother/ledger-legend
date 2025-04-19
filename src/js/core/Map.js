@@ -202,8 +202,7 @@ class Map {
         height: standardHeight,
         color: data.color,
         npc: data.npc,
-        signupLink: data.signupLink,
-        signupPoints: data.signupPoints
+        signupLink: data.signupLink
       });
       
       this.buildings.push(building);

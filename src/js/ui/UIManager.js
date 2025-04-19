@@ -8,9 +8,6 @@ class UIManager {
     this.game = game;
     
     // UI elements
-    this.pointsDisplay = document.getElementById('points-display');
-    this.inventoryDisplay = document.getElementById('inventory-display');
-    this.inventoryItems = document.getElementById('inventory-items');
     this.dialogBox = document.getElementById('dialog-box');
     this.dialogContent = document.getElementById('dialog-content');
     this.dialogAccept = document.getElementById('dialog-accept');
@@ -22,6 +19,8 @@ class UIManager {
     this.femaleCharacter = document.getElementById('female-character');
     this.startGameButton = document.getElementById('start-game');
     this.mobileControls = document.getElementById('mobile-controls');
+    this.buildingChecklist = document.getElementById('building-checklist');
+    this.checklistItems = document.getElementById('checklist-items');
     
     // Create reset button
     this.createResetButton();
@@ -55,13 +54,6 @@ class UIManager {
     
     // Initialize dialog controls
     this.initDialogControls();
-    
-    // Initialize inventory UI (to be implemented)
-    // this.initInventoryUI();
-    
-    // Hide points and inventory displays initially
-    this.hidePointsDisplay();
-    this.hideInventoryDisplay();
   }
   
   initIntroScreen() {
@@ -111,11 +103,11 @@ class UIManager {
       // Open the signup link in a new tab
       if (this.game.currentDialog && this.game.currentDialog.signupLink) {
         window.open(this.game.currentDialog.signupLink, '_blank');
-      }
-      
-      // Add points for signup
-      if (this.game.currentDialog && this.game.currentDialog.signupPoints) {
-        this.game.addPoints(this.game.currentDialog.signupPoints);
+        
+        // Mark the building as visited
+        if (this.game.currentBuildingId) {
+          this.game.markBuildingAsVisited(this.game.currentBuildingId);
+        }
       }
       
       this.hideDialog();
@@ -195,21 +187,11 @@ class UIManager {
     }
   }
   
-  updatePointsDisplay(points) {
-    this.pointsDisplay.textContent = `Points: ${formatNumber(points)}`;
-  }
-  
-  showPointsDisplay() {
-    this.pointsDisplay.classList.remove('hidden');
-    
-    // Also show reset button when game starts
+  // Show reset button when game starts
+  showResetButton() {
     if (this.resetButton) {
       this.resetButton.style.display = 'block';
     }
-  }
-  
-  hidePointsDisplay() {
-    this.pointsDisplay.classList.add('hidden');
   }
   
   showMobileControls() {
@@ -222,21 +204,6 @@ class UIManager {
     this.mobileControls.classList.add('hidden');
   }
   
-  showInventory() {
-    // To be implemented
-  }
-  
-  hideInventory() {
-    // To be implemented
-  }
-  
-  showInventoryDisplay() {
-    this.inventoryDisplay.classList.remove('hidden');
-  }
-  
-  hideInventoryDisplay() {
-    this.inventoryDisplay.classList.add('hidden');
-  }
   
   showNotification(message, duration = 3000) {
     // Create notification element
@@ -256,44 +223,65 @@ class UIManager {
     }, duration);
   }
   
-  updateResourceDisplay(resources) {
+  // Initialize the building checklist
+  initBuildingChecklist(buildings, visitedBuildings) {
     // Clear existing items
-    this.inventoryItems.innerHTML = '';
+    this.checklistItems.innerHTML = '';
     
-    // If no resources, show a message
-    if (!resources || Object.keys(resources).length === 0) {
-      const emptyMessage = document.createElement('div');
-      emptyMessage.textContent = 'No resources collected yet';
-      emptyMessage.style.fontStyle = 'italic';
-      emptyMessage.style.textAlign = 'center';
-      this.inventoryItems.appendChild(emptyMessage);
-      return;
-    }
-    
-    // Add each resource to the inventory display
-    for (const [resourceType, count] of Object.entries(resources)) {
-      // Create item container
-      const itemElement = document.createElement('div');
-      itemElement.className = 'inventory-item';
+    // Add each building to the checklist
+    buildings.forEach(building => {
+      // Create checklist item
+      const item = document.createElement('li');
+      item.className = 'checklist-item';
+      item.dataset.buildingId = building.id;
       
-      // Create resource name element
-      const nameElement = document.createElement('div');
-      nameElement.className = 'inventory-item-name';
-      nameElement.textContent = resourceType;
+      // Create checkbox
+      const checkbox = document.createElement('div');
+      checkbox.className = 'checklist-checkbox';
+      if (visitedBuildings && visitedBuildings[building.id]) {
+        checkbox.classList.add('checked');
+      }
       
-      // Create resource count element
-      const countElement = document.createElement('div');
-      countElement.className = 'inventory-item-count';
-      countElement.textContent = count;
+      // Create label
+      const label = document.createElement('div');
+      label.className = 'checklist-label';
+      label.textContent = building.name;
       
-      // Add elements to item container
-      itemElement.appendChild(nameElement);
-      itemElement.appendChild(countElement);
+      // Add elements to item
+      item.appendChild(checkbox);
+      item.appendChild(label);
       
-      // Add item to inventory
-      this.inventoryItems.appendChild(itemElement);
-    }
+      // Add item to checklist
+      this.checklistItems.appendChild(item);
+    });
   }
+  
+  // Update the building checklist
+  updateBuildingChecklist(buildings, visitedBuildings) {
+    // Update each building in the checklist
+    buildings.forEach(building => {
+      const item = this.checklistItems.querySelector(`li[data-building-id="${building.id}"]`);
+      if (item) {
+        const checkbox = item.querySelector('.checklist-checkbox');
+        if (visitedBuildings && visitedBuildings[building.id]) {
+          checkbox.classList.add('checked');
+        } else {
+          checkbox.classList.remove('checked');
+        }
+      }
+    });
+  }
+  
+  // Show the building checklist
+  showBuildingChecklist() {
+    this.buildingChecklist.classList.remove('hidden');
+  }
+  
+  // Hide the building checklist
+  hideBuildingChecklist() {
+    this.buildingChecklist.classList.add('hidden');
+  }
+  
 }
 
 export default UIManager;

@@ -1,20 +1,5 @@
 // Game data and constants
 
-// Resource types
-export const RESOURCE_TYPES = {
-  TECH_STACK: 'Tech Stack',
-  NETWORKING_SKILLS: 'Networking Skills',
-  ACCOUNTING_CONFERENCES: 'Accounting Conferences',
-  CPE: 'Continuing Professional Education'
-};
-
-// Points for different actions
-export const POINTS = {
-  NEWSLETTER_SIGNUP: 500,
-  COMMUNITY_SIGNUP: 1000,
-  COLLECT_RESOURCE: 100
-};
-
 // Building data
 export const BUILDINGS = [
   {
@@ -26,7 +11,7 @@ export const BUILDINGS = [
     color: 0xf5deb3, // Wheat color
     npc: {
       name: 'Mayor "Count DeMoney"',
-      dialog: 'Welcome to Ledger Town! Your goal is to build your accounting empire by collecting resources and networking with the community.'
+      dialog: 'Welcome to Ledger Town! Your goal is to build your accounting empire by networking with the community.'
     }
   },
   {
@@ -39,10 +24,6 @@ export const BUILDINGS = [
     npc: {
       name: 'Byte Balance',
       dialog: 'Technology is essential for modern accounting. Let me help you set up your tech stack!'
-    },
-    resource: {
-      type: 'Tech Stack',
-      value: 1
     }
   },
   {
@@ -55,10 +36,6 @@ export const BUILDINGS = [
     npc: {
       name: 'Ledger Link',
       dialog: 'Networking is key to building a successful practice. Let me teach you some networking skills!'
-    },
-    resource: {
-      type: 'Networking Skills',
-      value: 1
     }
   },
   {
@@ -71,10 +48,6 @@ export const BUILDINGS = [
     npc: {
       name: 'Audit Annie',
       dialog: 'Attending conferences is a great way to stay updated on industry trends and make connections!'
-    },
-    resource: {
-      type: 'Accounting Conferences',
-      value: 1
     }
   },
   {
@@ -88,8 +61,7 @@ export const BUILDINGS = [
       name: 'Firm Foundation Fred',
       dialog: 'Joining our accounting community will give you access to resources, mentorship, and potential clients!'
     },
-    signupLink: 'https://example.com/community-signup',
-    signupPoints: 1000
+    signupLink: 'https://example.com/community-signup'
   },
   {
     id: 'newsletter_office',
@@ -102,8 +74,7 @@ export const BUILDINGS = [
       name: 'News Nancy',
       dialog: 'Stay informed about the latest accounting trends by subscribing to our newsletter!'
     },
-    signupLink: 'https://example.com/newsletter-signup',
-    signupPoints: 500
+    signupLink: 'https://example.com/newsletter-signup'
   }
 ];
 

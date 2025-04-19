@@ -26,8 +26,7 @@ class Game {
     this.map = null;
     this.buildings = [];
     this.npcs = [];
-    this.resources = {};
-    this.points = 0;
+    this.visitedBuildings = {};
     this.isMobile = window.innerWidth < 768;
     this.joystick = null;
     this.controls = {
@@ -199,9 +198,6 @@ class Game {
   initUI() {
     // Show intro screen
     this.ui.showIntroScreen();
-    
-    // Initialize empty inventory display
-    this.ui.updateResourceDisplay(this.resources);
   }
   
   continueToCharacterSelection() {
@@ -348,21 +344,16 @@ class Game {
     // Position player at the center of the map
     this.player.position.set(0, 0, 0);
     
-    // Update and show points display
-    this.ui.updatePointsDisplay(this.points);
-    this.ui.showPointsDisplay();
-    
-    // Show inventory display
-    this.ui.updateResourceDisplay(this.resources);
-    this.ui.showInventoryDisplay();
-    
     // Show mobile controls if on mobile
     if (this.isMobile) {
       this.ui.showMobileControls();
     }
     
+    // Show reset button
+    this.ui.showResetButton();
+    
     // Show welcome notification
-    this.ui.showNotification('Welcome to Accounting Town! Visit all the buildings to earn points!');
+    this.ui.showNotification('Welcome to Accounting Town! Visit all the buildings to learn more!');
     
     // Try to load saved game
     this.loadSavedGame();
@@ -380,18 +371,10 @@ class Game {
         );
       }
       
-      // Restore points
-      if (savedData.points !== undefined) {
-        this.points = savedData.points;
-        this.ui.updatePointsDisplay(this.points);
-        this.ui.showPointsDisplay();
-      }
-      
-      // Restore resources
-      if (savedData.resources) {
-        this.resources = savedData.resources;
-        this.ui.updateResourceDisplay(this.resources);
-        this.ui.showInventoryDisplay();
+      // Restore visited buildings
+      if (savedData.visitedBuildings) {
+        this.visitedBuildings = savedData.visitedBuildings;
+        this.ui.updateBuildingChecklist(this.buildings, this.visitedBuildings);
       }
       
       // Show notification
@@ -399,6 +382,10 @@ class Game {
       
       console.log('Game loaded successfully');
     }
+    
+    // Initialize the building checklist
+    this.ui.initBuildingChecklist(this.buildings, this.visitedBuildings);
+    this.ui.showBuildingChecklist();
   }
   
   saveGame() {
@@ -408,8 +395,7 @@ class Game {
         y: this.player.position.y,
         z: this.player.position.z
       },
-      points: this.points,
-      resources: this.resources
+      visitedBuildings: this.visitedBuildings
     };
     
     const saved = saveGame(gameData);
@@ -449,38 +435,26 @@ class Game {
       this.showDialog(dialog);
     }
     
-    // Add resource if available
-    if (dialog.resource) {
-      this.addResource(dialog.resource.type, dialog.resource.value);
-    }
-    
     // Save game after interaction
     this.saveGame();
   }
   
-  addResource(type, value) {
-    // Add resource to inventory
-    if (!this.resources[type]) {
-      this.resources[type] = 0;
+  // Mark a building as visited
+  markBuildingAsVisited(buildingId) {
+    this.visitedBuildings[buildingId] = true;
+    this.ui.updateBuildingChecklist(this.buildings, this.visitedBuildings);
+    this.saveGame();
+    
+    // Check if all buildings have been visited
+    const allVisited = this.buildings.every(building => this.visitedBuildings[building.id]);
+    if (allVisited) {
+      this.ui.showNotification('Congratulations! You have visited all buildings!');
+    } else {
+      // Count how many buildings have been visited
+      const visitedCount = Object.keys(this.visitedBuildings).length;
+      const totalCount = this.buildings.length;
+      this.ui.showNotification(`Building visited! (${visitedCount}/${totalCount})`);
     }
-    
-    this.resources[type] += value;
-    
-    // Add points for collecting resource
-    this.addPoints(100);
-    
-    // Update inventory display
-    this.ui.updateResourceDisplay(this.resources);
-    
-    // Show notification
-    this.ui.showNotification(`Added ${value} ${type}!`);
-    
-    console.log(`Added ${value} ${type}. Total: ${this.resources[type]}`);
-  }
-  
-  addPoints(points) {
-    this.points += points;
-    this.ui.updatePointsDisplay(this.points);
   }
   
   onWindowResize() {
