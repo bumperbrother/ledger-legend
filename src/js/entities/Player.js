@@ -247,21 +247,11 @@ class Player {
     // Update the sprite based on direction and animation frame
     // In a full implementation, this would change the texture of the mesh
     
-    // For now, we'll just rotate the mesh based on direction
-    switch (this.direction) {
-      case 'up':
-        this.mesh.rotation.z = 0;
-        break;
-      case 'down':
-        this.mesh.rotation.z = Math.PI;
-        break;
-      case 'left':
-        this.mesh.rotation.z = Math.PI / 2;
-        break;
-      case 'right':
-        this.mesh.rotation.z = -Math.PI / 2;
-        break;
-    }
+    // Keep the character upright regardless of direction
+    // We'll just update the animation or visual cues based on direction
+    
+    // Store the current direction for visual reference
+    this.currentDirection = this.direction;
     
     // Add a slight bounce effect when moving
     if (this.isMoving) {
