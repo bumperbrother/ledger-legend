@@ -172,7 +172,7 @@ class Player {
     */
   }
   
-  update(deltaTime, controls, touchTarget) {
+  update(deltaTime, controls) {
     // Handle movement based on controls
     let isMoving = false;
     let newDirection = this.direction;
@@ -186,59 +186,29 @@ class Player {
       y: this.position.y
     };
     
-    // Check if we have a touch target (mobile touch controls)
-    if (touchTarget) {
-      // Calculate direction to target
-      const dx = touchTarget.x - this.position.x;
-      const dy = touchTarget.y - this.position.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-      
-      // Only move if we're not already at the target
-      if (distance > moveDistance) {
-        // Normalize direction
-        const dirX = dx / distance;
-        const dirY = dy / distance;
-        
-        // Move towards target
-        this.position.x += dirX * moveDistance;
-        this.position.y += dirY * moveDistance;
-        
-        // Set direction based on movement
-        if (Math.abs(dirX) > Math.abs(dirY)) {
-          newDirection = dirX > 0 ? 'right' : 'left';
-        } else {
-          newDirection = dirY > 0 ? 'up' : 'down';
-        }
-        
-        isMoving = true;
-      }
-    } 
-    // Otherwise use keyboard/joystick controls
-    else {
-      // Apply movement based on controls (allow diagonal movement)
-      if (controls.up) {
-        this.position.y += moveDistance;
-        newDirection = 'up';
-        isMoving = true;
-      }
-      
-      if (controls.down) {
-        this.position.y -= moveDistance;
-        newDirection = controls.up ? newDirection : 'down'; // Only change direction if not moving up
-        isMoving = true;
-      }
-      
-      if (controls.left) {
-        this.position.x -= moveDistance;
-        newDirection = controls.up || controls.down ? newDirection : 'left'; // Preserve up/down direction for diagonals
-        isMoving = true;
-      }
-      
-      if (controls.right) {
-        this.position.x += moveDistance;
-        newDirection = controls.up || controls.down ? newDirection : 'right'; // Preserve up/down direction for diagonals
-        isMoving = true;
-      }
+    // Apply movement based on controls (allow diagonal movement)
+    if (controls.up) {
+      this.position.y += moveDistance;
+      newDirection = 'up';
+      isMoving = true;
+    }
+    
+    if (controls.down) {
+      this.position.y -= moveDistance;
+      newDirection = controls.up ? newDirection : 'down'; // Only change direction if not moving up
+      isMoving = true;
+    }
+    
+    if (controls.left) {
+      this.position.x -= moveDistance;
+      newDirection = controls.up || controls.down ? newDirection : 'left'; // Preserve up/down direction for diagonals
+      isMoving = true;
+    }
+    
+    if (controls.right) {
+      this.position.x += moveDistance;
+      newDirection = controls.up || controls.down ? newDirection : 'right'; // Preserve up/down direction for diagonals
+      isMoving = true;
     }
     
     // Update direction if changed

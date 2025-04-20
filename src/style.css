@@ -229,7 +229,7 @@ body {
 /* Reset game button styling */
 #reset-game-button {
   position: absolute;
-  top: 20px;
+  bottom: 20px;
   right: 20px;
   background-color: var(--color-accent);
   color: white;
@@ -690,24 +690,5 @@ body {
   #share-x,
   #share-linkedin {
     width: 80%;
-  }
-  
-  /* Adjust building checklist for mobile */
-  #building-checklist {
-    max-width: 150px; /* Make it narrower on mobile */
-    font-size: 12px; /* Smaller font */
-  }
-  
-  #building-checklist h3 {
-    font-size: 14px; /* Smaller heading */
-  }
-  
-  .checklist-label {
-    font-size: 12px; /* Smaller text */
-  }
-  
-  /* Adjust notification position for mobile */
-  .notification {
-    top: 120px; /* Move down to avoid overlap with controls */
   }
 }
