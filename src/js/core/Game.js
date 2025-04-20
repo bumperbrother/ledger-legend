@@ -173,8 +173,7 @@ class Game {
     
     // Create camera with zoom factor to make the map seem bigger
     // A smaller view area means the camera is "zoomed in"
-    // Use a smaller zoom factor for mobile to show more of the map
-    this.zoomFactor = this.isMobile ? 2.5 : 4; // Lower value = more zoomed out
+    this.zoomFactor = 4; // Adjusted zoom factor based on user feedback
     
     this.camera = new THREE.OrthographicCamera(
       window.innerWidth / -2 / this.zoomFactor,
@@ -279,100 +278,50 @@ class Game {
     
     // Touch controls for mobile
     if (this.isMobile) {
-      // Initialize touch target variables
-      this.touchTarget = null;
-      this.isTouchMoving = false;
+      const mobileControls = document.getElementById('mobile-controls');
+      mobileControls.classList.remove('hidden');
       
-      // Add touch event listeners to the canvas
-      this.canvas.addEventListener('touchstart', (e) => this.handleTouchStart(e), { passive: false });
-      this.canvas.addEventListener('touchmove', (e) => this.handleTouchMove(e), { passive: false });
-      this.canvas.addEventListener('touchend', (e) => this.handleTouchEnd(e), { passive: false });
+      this.joystick = nipplejs.create({
+        zone: mobileControls,
+        mode: 'static',
+        position: { left: '50%', top: '50%' },
+        color: 'rgba(0, 0, 0, 0.5)',
+        size: 120
+      });
       
-      // Create a visual indicator for touch target
-      this.touchIndicator = document.createElement('div');
-      this.touchIndicator.id = 'touch-indicator';
-      this.touchIndicator.className = 'hidden';
-      document.getElementById('ui-container').appendChild(this.touchIndicator);
+      this.joystick.on('move', (evt, data) => {
+        // Allow movement controls in both PLAYING and DIALOG states
+        if (this.gameState !== GAME_STATES.PLAYING && this.gameState !== GAME_STATES.DIALOG) return;
+        
+        const angle = data.angle.radian;
+        const force = Math.min(data.force, 1);
+        
+        // Reset all controls
+        this.controls.up = false;
+        this.controls.down = false;
+        this.controls.left = false;
+        this.controls.right = false;
+        
+        // Set controls based on joystick direction
+        if (angle >= 0 && angle < Math.PI / 4 || angle >= 7 * Math.PI / 4) {
+          this.controls.right = true;
+        } else if (angle >= Math.PI / 4 && angle < 3 * Math.PI / 4) {
+          this.controls.up = true;
+        } else if (angle >= 3 * Math.PI / 4 && angle < 5 * Math.PI / 4) {
+          this.controls.left = true;
+        } else if (angle >= 5 * Math.PI / 4 && angle < 7 * Math.PI / 4) {
+          this.controls.down = true;
+        }
+      });
+      
+      this.joystick.on('end', () => {
+        // Reset all controls when joystick is released
+        this.controls.up = false;
+        this.controls.down = false;
+        this.controls.left = false;
+        this.controls.right = false;
+      });
     }
-  }
-  
-  // Handle touch start event
-  handleTouchStart(e) {
-    // Prevent default behavior to avoid scrolling
-    e.preventDefault();
-    
-    // Only process if in playing or dialog state
-    if (this.gameState !== GAME_STATES.PLAYING && this.gameState !== GAME_STATES.DIALOG) return;
-    
-    // Get the first touch
-    const touch = e.touches[0];
-    
-    // Convert touch position to world coordinates
-    const touchX = (touch.clientX / window.innerWidth) * 2 - 1;
-    const touchY = -((touch.clientY / window.innerHeight) * 2 - 1);
-    
-    // Calculate world position based on camera
-    const worldX = touchX * (window.innerWidth / 2) / this.zoomFactor;
-    const worldY = touchY * (window.innerHeight / 2) / this.zoomFactor;
-    
-    // Set touch target
-    this.touchTarget = { x: worldX, y: worldY };
-    this.isTouchMoving = true;
-    
-    // Show touch indicator
-    this.touchIndicator.style.left = `${touch.clientX}px`;
-    this.touchIndicator.style.top = `${touch.clientY}px`;
-    this.touchIndicator.classList.remove('hidden');
-    
-    console.log('Touch start:', this.touchTarget);
-  }
-  
-  // Handle touch move event
-  handleTouchMove(e) {
-    // Prevent default behavior to avoid scrolling
-    e.preventDefault();
-    
-    // Only process if in playing or dialog state and touch is active
-    if ((this.gameState !== GAME_STATES.PLAYING && this.gameState !== GAME_STATES.DIALOG) || !this.isTouchMoving) return;
-    
-    // Get the first touch
-    const touch = e.touches[0];
-    
-    // Convert touch position to world coordinates
-    const touchX = (touch.clientX / window.innerWidth) * 2 - 1;
-    const touchY = -((touch.clientY / window.innerHeight) * 2 - 1);
-    
-    // Calculate world position based on camera
-    const worldX = touchX * (window.innerWidth / 2) / this.zoomFactor;
-    const worldY = touchY * (window.innerHeight / 2) / this.zoomFactor;
-    
-    // Update touch target
-    this.touchTarget = { x: worldX, y: worldY };
-    
-    // Update touch indicator position
-    this.touchIndicator.style.left = `${touch.clientX}px`;
-    this.touchIndicator.style.top = `${touch.clientY}px`;
-  }
-  
-  // Handle touch end event
-  handleTouchEnd(e) {
-    // Prevent default behavior
-    e.preventDefault();
-    
-    // Reset touch state
-    this.isTouchMoving = false;
-    this.touchTarget = null;
-    
-    // Reset controls
-    this.controls.up = false;
-    this.controls.down = false;
-    this.controls.left = false;
-    this.controls.right = false;
-    
-    // Hide touch indicator
-    this.touchIndicator.classList.add('hidden');
-    
-    console.log('Touch end');
   }
   
   startGame(characterType) {
@@ -513,8 +462,8 @@ class Game {
     // Update mobile status
     this.isMobile = window.innerWidth < 768;
     
-    // Update zoom factor based on device type
-    this.zoomFactor = this.isMobile ? 2.5 : 4;
+    // Use consistent zoom factor
+    this.zoomFactor = 4;
     
     // Update camera with zoom factor
     this.camera.left = window.innerWidth / -2 / this.zoomFactor;
@@ -540,8 +489,7 @@ class Game {
     // Update player if game is in playing or dialog state
     // This allows player to continue moving even when dialog is shown
     if ((this.gameState === GAME_STATES.PLAYING || this.gameState === GAME_STATES.DIALOG) && this.player) {
-      // Pass touch target to player update if it exists
-      this.player.update(deltaTime, this.controls, this.isTouchMoving ? this.touchTarget : null);
+      this.player.update(deltaTime, this.controls);
       
       // Update camera to follow player
       if (this.player.position) {
