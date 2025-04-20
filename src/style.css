@@ -657,8 +657,20 @@ body {
   }
   
   #dialog-box {
-    width: 90%;
-    bottom: 100px; /* Make room for mobile controls */
+    width: 80%; /* Smaller width on mobile */
+    max-width: 400px; /* Limit maximum width */
+    bottom: 120px; /* More room for mobile controls */
+    padding: 15px; /* Less padding */
+    font-size: 14px; /* Smaller font */
+  }
+  
+  #dialog-content {
+    margin-bottom: 15px; /* Less margin */
+  }
+  
+  #dialog-buttons button {
+    padding: 6px 12px; /* Smaller buttons */
+    font-size: 14px; /* Smaller font */
   }
   
   #share-buttons {
