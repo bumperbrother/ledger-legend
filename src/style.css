@@ -255,6 +255,14 @@ body {
   left: 30px;
   width: 120px;
   height: 120px;
+  z-index: 1000; /* Ensure it's above other elements */
+  pointer-events: auto; /* Make sure it can receive touch events */
+}
+
+/* Make sure the joystick is visible on mobile */
+.nipple {
+  opacity: 0.8 !important;
+  z-index: 1001 !important;
 }
 
 #intro-screen {
@@ -569,27 +577,6 @@ body {
 @keyframes fadeOut {
   from { opacity: 1; transform: translate(-50%, 0); }
   to { opacity: 0; transform: translate(-50%, -20px); }
-}
-
-/* Touch indicator styling */
-#touch-indicator {
-  position: absolute;
-  width: 30px;
-  height: 30px;
-  margin-left: -15px;
-  margin-top: -15px;
-  border-radius: 50%;
-  background-color: rgba(52, 152, 219, 0.5); /* Semi-transparent primary color */
-  border: 2px solid var(--color-primary);
-  pointer-events: none; /* Allow clicks to pass through */
-  z-index: 1000;
-  animation: pulse 1s infinite;
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); opacity: 0.7; }
-  50% { transform: scale(1.2); opacity: 0.5; }
-  100% { transform: scale(1); opacity: 0.7; }
 }
 
 /* Victory popup styling */

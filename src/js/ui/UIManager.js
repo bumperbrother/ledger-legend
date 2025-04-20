@@ -262,13 +262,25 @@ class UIManager {
   }
   
   showMobileControls() {
-    // We're now using touch-based controls directly on the canvas
-    // Hide the joystick controls container
-    this.mobileControls.classList.add('hidden');
+    if (window.innerWidth < 768) {
+      this.mobileControls.classList.remove('hidden');
+      console.log('Mobile controls shown in UIManager');
+      
+      // Force the mobile controls to be visible with inline style
+      this.mobileControls.style.display = 'block';
+      this.mobileControls.style.zIndex = '1000'; // Ensure it's above other elements
+    }
   }
   
   hideMobileControls() {
-    this.mobileControls.classList.add('hidden');
+    if (window.innerWidth >= 768) {
+      this.mobileControls.classList.add('hidden');
+      console.log('Mobile controls hidden in UIManager');
+    } else {
+      // Don't hide on mobile devices
+      console.log('Attempted to hide mobile controls, but device is mobile. Keeping visible.');
+      this.showMobileControls();
+    }
   }
   
   

@@ -348,6 +348,7 @@ class Game {
     // Show mobile controls if on mobile
     if (this.isMobile) {
       this.ui.showMobileControls();
+      console.log('Showing mobile controls in startGame');
     }
     
     // Show reset button
