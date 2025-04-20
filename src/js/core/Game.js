@@ -173,7 +173,8 @@ class Game {
     
     // Create camera with zoom factor to make the map seem bigger
     // A smaller view area means the camera is "zoomed in"
-    this.zoomFactor = 4; // Adjusted zoom factor based on user feedback
+    // Use a smaller zoom factor for mobile to show more of the map
+    this.zoomFactor = this.isMobile ? 2.5 : 4; // Lower value = more zoomed out
     
     this.camera = new THREE.OrthographicCamera(
       window.innerWidth / -2 / this.zoomFactor,
@@ -462,8 +463,8 @@ class Game {
     // Update mobile status
     this.isMobile = window.innerWidth < 768;
     
-    // Use consistent zoom factor
-    this.zoomFactor = 4;
+    // Update zoom factor based on device type
+    this.zoomFactor = this.isMobile ? 2.5 : 4;
     
     // Update camera with zoom factor
     this.camera.left = window.innerWidth / -2 / this.zoomFactor;
