@@ -262,9 +262,9 @@ class UIManager {
   }
   
   showMobileControls() {
-    if (window.innerWidth < 768) {
-      this.mobileControls.classList.remove('hidden');
-    }
+    // We're now using touch-based controls directly on the canvas
+    // Hide the joystick controls container
+    this.mobileControls.classList.add('hidden');
   }
   
   hideMobileControls() {
