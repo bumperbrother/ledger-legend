@@ -129,7 +129,7 @@ class Map {
           name: 'Editor Eddie',
           dialog: 'Sign up for the best newsletter in the accounting space to stay informed about the latest trends and strategies!'
         },
-        signupLink: 'https://www.jasononfirms.com/',
+        signupLink: 'https://jasononline.link/1ie',
         signupPoints: 750
       },
       {
@@ -140,7 +140,7 @@ class Map {
           name: 'Community Claire',
           dialog: 'Join our community with 500+ accounting firm owners to share knowledge and grow together!'
         },
-        signupLink: 'https://www.rlz.io/',
+        signupLink: 'https://jasononline.link/949',
         signupPoints: 1000
       },
       {
@@ -151,7 +151,7 @@ class Map {
           name: 'Director Dave',
           dialog: 'Check out our YouTube channel dedicated to helping accounting firm owners thrive!'
         },
-        signupLink: 'https://www.youtube.com/@jasoncpa/featured',
+        signupLink: 'https://jasononline.link/eyz',
         signupPoints: 500
       },
       {
@@ -162,7 +162,7 @@ class Map {
           name: 'Podcast Pete',
           dialog: 'Tune in to our podcast dedicated to helping accounting firm owners succeed in their practice!'
         },
-        signupLink: 'https://www.youtube.com/@JasonOnFirmsPodcast',
+        signupLink: 'https://jasononline.link/78cb47',
         signupPoints: 250
       },
       {
@@ -173,7 +173,7 @@ class Map {
           name: 'Tech Terry',
           dialog: 'Try our Practice Management recommender tool to find the best software solutions for your accounting firm!'
         },
-        signupLink: 'https://www.jasononfirms.com/pm-rec-1',
+        signupLink: 'https://jasononline.link/99k',
         signupPoints: 100
       },
       {
